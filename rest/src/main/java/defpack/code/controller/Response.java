@@ -1,16 +1,18 @@
-package code.controller;
+package defpack.code.controller;
+
+import org.springframework.http.HttpStatus;
 
 public class Response {
 
-    private final String status;
+    private final HttpStatus status;
     private final Integer code;
 
-    public Response(String status, Integer code) {
+    public Response(HttpStatus status, Integer code) {
         this.status = status;
         this.code = code;
     }
 
-    public String getStatus() {
+    public HttpStatus getStatus() {
         return status;
     }
 

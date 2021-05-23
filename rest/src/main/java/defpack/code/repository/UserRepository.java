@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class UserRepository {
 
@@ -31,6 +33,22 @@ public class UserRepository {
         List<User> list = new ArrayList<>();
         for (Map.Entry user : users.entrySet()) {
             list.add((User) user.getValue());
+        }
+
+        return list;
+    }
+
+    public List<User> listUsers(String userNameMask) {
+
+        List<User> list = new ArrayList<>();
+
+        Pattern p = Pattern.compile(userNameMask);
+
+        for (Map.Entry map : users.entrySet()) {
+            Matcher m = p.matcher((CharSequence) map.getKey());
+            if (m.matches()) {
+                list.add((User) map.getValue());
+            }
         }
 
         return list;

@@ -1,4 +1,4 @@
-package http;
+package defpack.http;
 
 
 import io.restassured.RestAssured;
@@ -38,7 +38,6 @@ public class RestHttpClient {
 
         stResponse.setResponseCode(response.getStatusCode());
         stResponse.setResponseBody(response.body().prettyPrint());
-//        stResponse.setResponseBody(response.body().prettyPrint());
 
         return stResponse;
     }
