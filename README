@@ -2,3 +2,6 @@ userNameMask:
 (.*) - все
 (.*[0-9]) - содержащее хотя бы одну цифру
 
+mvn package -Dmaven.test.skip=true
+
+mvn allure:serve
