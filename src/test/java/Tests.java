@@ -1,6 +1,9 @@
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import defpack.Application;
+import defpack.code.entity.User;
 import defpack.code.service.MailService;
 import http.RestHttpClient;
 import http.STResponse;
@@ -34,17 +37,19 @@ public class Tests {
     @Description("Update password (positive)")
     public void postUpdatePassword() {
 
-        String json = "{ \"name\" : \"bonbon\", \"oldPassword\" : \"1234\", \"password\" : \"666\" }";
+        // 1
+        String json = "{ \"name\" : \"bonbon\", \"password\" : \"1234\" }";
+        STResponse stResponse = steps.postUser(json);
+        Assertions.assertEquals(stResponse.getResponseCode(), 200);
 
-        JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
+        //2
+        String jsonSecond = "{ \"name\" : \"bonbon\", \"oldPassword\" : \"1234\", \"password\" : \"666\" }";
+        STResponse stResponseSecond = steps.updatePassword(jsonSecond);
+        Assertions.assertEquals(stResponseSecond.getResponseCode(), 200);
 
-        STResponse stResponse = httpClient.runPostRequest("http://localhost:8080/updatePassword", jsonObject.toString());
-
-        System.out.println("OUT:");
-        System.out.println(stResponse.getResponseCode());
-        System.out.println(stResponse.getResponseBody());
-
-        Assertions.assertTrue(true);
+        //3
+        User user = new Gson().fromJson(stResponseSecond.getResponseBody(), User.class);
+        Assertions.assertEquals(user.getPassword(), "666", "Password not match");
     }
 
     @Test
@@ -53,23 +58,24 @@ public class Tests {
     public void postUserFailPassword() {
 
         String json = "{ \"name\" : \"fail2\", \"password\" : \" \" }";
-
         steps.postUser(json);
 
     }
 
     @Test
     @Story("*")
-    @Description("Add user negative with same name (negative)")
+    @Description("Add user with same name (negative)")
     public void postUserFailName() {
 
+        //1
         String json = "{ \"name\" : \"samename\", \"password\" : \"123\" }";
+        STResponse stResponse = steps.postUser(json);
+        Assertions.assertEquals(stResponse.getResponseCode(), 200);
 
-        steps.postUser(json);
-
+        //2
         String jsonSecond = "{ \"name\" : \"samename\", \"password\" : \"123\" }";
-
-        steps.postUser(jsonSecond);
+        STResponse stResponseSecond = steps.postUser(jsonSecond);
+        Assertions.assertEquals(stResponseSecond.getResponseCode(), 500);
 
     }
 
@@ -78,23 +84,15 @@ public class Tests {
     @Description("Update password when user not exists (negative)")
     public void postUpdatePasswordFailName() {
 
+        //1
         String json = "{ \"name\" : \"update\", \"password\" : \"1234\" }";
+        STResponse stResponse = steps.postUser(json);
+        Assertions.assertEquals(stResponse.getResponseCode(), 200);
 
-        steps.postUser(json);
-
+        //2
         String jsonSecond = "{ \"name\" : \"updatee\", \"oldPassword\" : \"1234\", \"password\" : \"12345\" }";
-
-        JsonObject jsonObjectSecond = new JsonParser().parse(jsonSecond).getAsJsonObject();
-
-        STResponse stResponseSecond = httpClient.runPostRequest("http://localhost:8080/updatePassword", jsonObjectSecond.toString());
-
-        System.out.println();
-        System.out.println("OUT2:");
-        System.out.println(stResponseSecond.getResponseCode());
-        System.out.println(stResponseSecond.getResponseBody());;
-
-        Assertions.assertFalse(false);
-
+        STResponse stResponseSecond = steps.updatePassword(jsonSecond);
+        Assertions.assertEquals(stResponseSecond.getResponseCode(), 500);
     }
 
     @Test
@@ -102,49 +100,51 @@ public class Tests {
     @Description("Update password with same password (negative)")
     public void postUpdatePasswordFailPassword() {
 
+        //1
         String json = "{ \"name\" : \"password\",  \"password\" : \"1234\" }";
+        STResponse stResponse = steps.postUser(json);
+        Assertions.assertEquals(stResponse.getResponseCode(), 200);
 
-        steps.postUser(json);
-
+        //2
         String jsonSecond = "{ \"name\" : \"password\", \"oldPassword\" : \"1234\", \"password\" : \"1234\" }";
-
-        JsonObject jsonObjectSecond = new JsonParser().parse(jsonSecond).getAsJsonObject();
-
-        STResponse stResponseSecond = httpClient.runPostRequest("http://localhost:8080/updatePassword", jsonObjectSecond.toString());
-
-        System.out.println();
-        System.out.println("OUT2:");
-        System.out.println(stResponseSecond.getResponseCode());
-        System.out.println(stResponseSecond.getResponseBody());;
-
-        Assertions.assertFalse(false);
+        STResponse stResponseSecond = steps.updatePassword(jsonSecond);
+        Assertions.assertEquals(stResponseSecond.getResponseCode(), 500);
 
     }
 
     @Test
-    @Story("User tries to login the system with invalid username and invalid password.")
-    @Description("Invalid Login Test with Invalid Username and Invalid Password.")
+    @Story("*")
+    @Description("Add user and update password (positive)")
     public void testOne() {
 
+        //1
         String json = "{ \"name\" : \"newUser\", \"password\" : \"12345\" }";
+        STResponse stResponse = steps.postUser(json);
+        Assertions.assertEquals(stResponse.getResponseCode(), 200);
 
-        steps.postUser(json);
-
+        //2
         when(mailService.sendMailAdd()).thenReturn("Send mail: add user");
 
+        //3
         String jsonSecond = "{ \"name\" : \"newUser\", \"oldPassword\" : \"12345\", \"password\" : \"666666\" }";
+        STResponse stResponseSecond = steps.updatePassword(jsonSecond);
+        Assertions.assertEquals(stResponseSecond.getResponseCode(), 200);
 
-        JsonObject jsonObjectSecond = new JsonParser().parse(jsonSecond).getAsJsonObject();
-
-        STResponse stResponseSecond = httpClient.runPostRequest("http://localhost:8080/updatePassword", jsonObjectSecond.toString());
-
-        System.out.println("OUT:");
-        System.out.println(stResponseSecond.getResponseCode());
-        System.out.println(stResponseSecond.getResponseBody());
-
+        //4
         when(mailService.sendMailUpdatePass()).thenReturn("Send mail: update password");
+    }
 
-        Assertions.assertTrue(true);
+    @Test
+    @Description("Fail")
+    public void testFail() {
+        //1
+        String json = "{ \"name\" : \"fail\", \"password\" : \"fail\" }";
+        STResponse stResponse = steps.postUser(json);
+        Assertions.assertEquals(stResponse.getResponseCode(), 200);
+        //1
+        String jsonSecond = "{ \"name\" : \"fail\", \"password\" : \"fail\" }";
+        STResponse stResponseSecond = steps.postUser(jsonSecond);
+        Assertions.assertEquals(stResponseSecond.getResponseCode(), 200);
     }
 
     @Test

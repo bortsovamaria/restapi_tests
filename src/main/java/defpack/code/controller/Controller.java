@@ -2,8 +2,9 @@ package defpack.code.controller;
 
 import defpack.code.entity.User;
 import defpack.code.repository.UserRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,9 @@ import java.util.List;
 @RequestMapping("/")
 public class Controller {
 
-    private static final Logger logger = LoggerFactory.getLogger(Controller.class);
+//    private static final Logger logger = LoggerFactory.getLogger(Controller.class);
+
+    final static Logger logger = LogManager.getLogger(Controller.class);
 
     UserRepository userRepository = new UserRepository();
 
@@ -50,16 +53,20 @@ public class Controller {
         User newUser = new User();
 
         if (user.getPassword().isEmpty() || user.getPassword() == null) {
+            logger.error("This password empty or null!");
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         if (userRepository.userByName(user.getName()) != null) {
+            logger.error("This name exists!");
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         newUser.setName(user.getName());
         newUser.setPassword(user.getPassword());
         userRepository.addUser(newUser);
+
+        logger.info("Add user");
 
         return new ResponseEntity<>(newUser, new HttpHeaders(), HttpStatus.OK);
     }
