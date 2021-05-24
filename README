@@ -1,7 +1,10 @@
+
+Чтобы увидеть работу приложения и результаты тестов в Allure:
+
+1. Запустить приложение src/main/java/defpack/Application.java
+2. Запустить скрипт run_tests_and_watch_in_allure.sh (в корне проекта)
+
+
 userNameMask:
 (.*) - все
 (.*[0-9]) - содержащее хотя бы одну цифру
-
-mvn package -Dmaven.test.skip=true
-
-mvn allure:serve

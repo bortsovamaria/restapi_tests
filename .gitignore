@@ -14,4 +14,4 @@
 *.idea
 
 *.allure
-*/allure-results
+/allure-results
