@@ -1,7 +1,7 @@
 package defpack.code.controller;
 
 import code.entity.User;
-import code.repository.UserRepository;
+import defpack.code.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;

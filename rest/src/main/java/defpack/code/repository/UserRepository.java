@@ -1,4 +1,4 @@
-package code.repository;
+package defpack.code.repository;
 
 import code.entity.User;
 

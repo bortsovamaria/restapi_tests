@@ -206,4 +206,33 @@ public class Tests {
 
         Assertions.assertTrue(true);
     }
+
+    @Test
+    @Story("User tries to login the system with empty username and invalid password.")
+    @Description("Invalid Login Test with Empty Username and Invalid Password.")
+    public void postNameRegex() {
+
+        STResponse stResponse = httpClient.runPostRequest("http://localhost:8080/api/config/userNameRegex?value=(.*[0-9])", null);
+
+        System.out.println("OUT:");
+        System.out.println(stResponse.getResponseCode());
+        System.out.println(stResponse.getResponseBody());
+
+        Assertions.assertTrue(true);
+    }
+
+    @Test
+    @Story("User tries to login the system with empty username and invalid password.")
+    @Description("Invalid Login Test with Empty Username and Invalid Password.")
+    public void postPassRegex() {
+
+        STResponse stResponse = httpClient.runPostRequest("http://localhost:8080/api/config/passRegex?value=(.*[0-9])", null);
+
+
+        System.out.println("OUT:");
+        System.out.println(stResponse.getResponseCode());
+        System.out.println(stResponse.getResponseBody());
+
+        Assertions.assertTrue(true);
+    }
 }
