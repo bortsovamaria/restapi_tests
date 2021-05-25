@@ -23,24 +23,6 @@ public class Controller {
 
     UserRepository userRepository = new UserRepository();
 
-//    @GetMapping()
-//    public Response showStatus() {
-//        return new Response(HttpStatus.CONTINUE, 100);
-//    }
-//
-//
-//    @GetMapping(value = "/ok")
-//    public Response showStatusOk() {
-//        logger.info("test");
-//        return new Response(HttpStatus.OK, 200);
-//    }
-//
-//    @GetMapping("/user")
-//    public User user(@RequestParam(value = "name") String name) {
-//        System.out.println("GET");
-//        return userRepository.userByName(name);
-//    }
-
     /*
         post /user
      */

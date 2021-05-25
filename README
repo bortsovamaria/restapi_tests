@@ -5,8 +5,9 @@
 2. Запустить скрипт run_tests_and_watch_in_allure.sh (в корне проекта)
 
 
+Логи работы контроллера в папке logs/ (only error)
 
-Логи работы контроллера в папке logs/
+Конфигурация задается хардкодом* в src/main/java/defpack/code/config/ConfigRepository.java
 
 
 userNameMask:

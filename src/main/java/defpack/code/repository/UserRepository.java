@@ -1,6 +1,8 @@
 package defpack.code.repository;
 
+import defpack.code.config.ConfigRepository;
 import defpack.code.entity.User;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -14,6 +16,10 @@ import java.util.regex.Pattern;
  */
 public class UserRepository {
 
+    ConfigRepository configRepository = new ConfigRepository();
+
+//    @Autowired
+//    ConfigRepository configRepository;
 
     static Map<String, User> users = new Hashtable<>(); //DB
 
@@ -30,8 +36,22 @@ public class UserRepository {
         return users.get(name);
     }
 
+    /*
+        add user in repository
+     */
     public User addUser(User u) {
-        users.put(u.getName(), u);
+        /*
+            according regex
+         */
+        Pattern p = Pattern.compile(configRepository.getUserName());
+        Pattern p2 = Pattern.compile(configRepository.getPassword());
+
+        Matcher m = p.matcher(u.getName());
+        Matcher m2 = p2.matcher(u.getPassword());
+//
+        if (m.matches() || m2.matches()) {
+            users.put(u.getName(), u);
+        }
         return u;
     }
 

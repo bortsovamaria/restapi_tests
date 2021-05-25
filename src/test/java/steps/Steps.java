@@ -19,7 +19,7 @@ public class Steps {
     MailService mailService;
 
     @Step("Get all Users")
-    public void getUsers() {
+    public STResponse getUsers() {
 
         STResponse stResponse = httpClient.runGetRequest("http://localhost:8080/users");
 
@@ -27,7 +27,7 @@ public class Steps {
         System.out.println(stResponse.getResponseCode());
         System.out.println(stResponse.getResponseBody());
 
-        Assertions.assertTrue(true);
+        return stResponse;
     }
 
     @Step("Add user")
